@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
-import s from './Section.module.css';
+import { SectionContainer, Title } from './Section.styles';
 
 export default function Section({ title, children }) {
   return (
-    <section className={s.wrapper}>
-      {title && <h2 className={s.title}>{title}</h2>}
+    <SectionContainer>
+      {title && <Title>{title}</Title>}
       {children}
-    </section>
+    </SectionContainer>
   );
 }
 

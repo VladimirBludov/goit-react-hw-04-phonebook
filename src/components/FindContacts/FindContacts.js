@@ -1,19 +1,12 @@
 import PropTypes from 'prop-types';
-import s from './FindContacts.module.css';
+import { Label, Filter } from './FindContacts.styles';
 
 export default function FindContacts({ filter, onChange }) {
   return (
-    <label className={s.label}>
+    <Label>
       Find contacts by name
-      <input
-        className={s.input}
-        type="text"
-        name="filter"
-        value={filter}
-        onChange={onChange}
-        autoComplete="off"
-      />
-    </label>
+      <Filter value={filter} onChange={onChange} />
+    </Label>
   );
 }
 

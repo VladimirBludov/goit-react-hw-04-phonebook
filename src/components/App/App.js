@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import styled from 'styled-components';
-import s from './App.module.css';
 import shortid from 'shortid';
 import ContactForm from '../ContactForm';
 import Contacts from '../Contacts';
 import FindContacts from '../FindContacts';
 import Section from '../Section';
+import { TitleProject } from './App.styles';
 
 export default class App extends Component {
   state = {
@@ -86,7 +85,7 @@ export default class App extends Component {
     const { filter } = this.state;
     return (
       <div>
-        <h1 className={s.title}>Phonebook</h1>
+        <TitleProject>Phonebook</TitleProject>
         <Section>
           <ContactForm addContact={this.addContact} />
         </Section>
