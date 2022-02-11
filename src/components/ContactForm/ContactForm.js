@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Form,
@@ -8,45 +8,37 @@ import {
   InputNumber,
 } from './ContactForm.styles';
 
-export default class ContactForm extends Component {
-  static propTypes = {
-    addContact: PropTypes.func.isRequired,
-  };
+export default function ContactForm({ addContact }) {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-  state = {
-    name: '',
-    number: '',
-  };
+  const handleChangeName = e => setName(e.target.value);
 
-  handleChange = e => {
-    const { name, value } = e.currentTarget;
-    this.setState({ [name]: value });
-  };
+  const handleChangeNumber = e => setNumber(e.target.value);
 
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
 
-    this.props.addContact(this.state);
-    this.resetForm();
+    addContact(name, number);
+    setName('');
+    setNumber('');
   };
 
-  resetForm = () => this.setState({ name: '', number: '' });
-
-  render() {
-    const { name, number } = this.state;
-
-    return (
-      <Form onSubmit={this.handleSubmit}>
-        <Label>
-          Name
-          <InputName value={name} onChange={this.handleChange} />
-        </Label>
-        <Label>
-          Number
-          <InputNumber value={number} onChange={this.handleChange} />
-        </Label>
-        <ButtonSubmit>Add contact</ButtonSubmit>
-      </Form>
-    );
-  }
+  return (
+    <Form onSubmit={handleSubmit}>
+      <Label>
+        Name
+        <InputName value={name} onChange={handleChangeName} />
+      </Label>
+      <Label>
+        Number
+        <InputNumber value={number} onChange={handleChangeNumber} />
+      </Label>
+      <ButtonSubmit>Add contact</ButtonSubmit>
+    </Form>
+  );
 }
+
+ContactForm.propTypes = {
+  addContact: PropTypes.func.isRequired,
+};

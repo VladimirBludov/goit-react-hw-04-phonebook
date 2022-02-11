@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
+import { useLocalStorage } from 'react-use';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import shortid from 'shortid';
@@ -8,33 +9,17 @@ import FindContacts from '../FindContacts';
 import Section from '../Section';
 import { TitleProject } from './App.styles';
 
-export default class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
-  };
+export default function App() {
+  const [contacts, setContacts] = useLocalStorage('contacts', []);
+  const [filter, setFilter] = useState('');
 
-  componentDidMount() {
-    const contacts = JSON.parse(localStorage.getItem('contacts'));
+  const addContact = (name, number) => {
+    const isContact = checkContact(name);
 
-    if (!contacts) return;
-
-    this.setState({ contacts });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const prevContacts = prevState.contacts;
-    const nextContacts = this.state.contacts;
-
-    if (prevContacts.length !== nextContacts.length) {
-      localStorage.setItem('contacts', JSON.stringify(nextContacts));
+    if (isContact) {
+      toast.error(`${name} is already in contacts.`);
+      return;
     }
-  }
-
-  addContact = ({ name, number }) => {
-    const isContact = this.checkContact(this.state.contacts, name);
-
-    if (isContact) return;
 
     const contact = {
       id: shortid.generate(),
@@ -42,24 +27,16 @@ export default class App extends Component {
       number,
     };
 
-    this.setState(({ contacts }) => ({
-      contacts: [...contacts, contact],
-    }));
+    setContacts(contacts => [...contacts, contact]);
   };
 
-  deleteContact = id => {
-    this.setState(({ contacts }) => ({
-      contacts: contacts.filter(contact => contact.id !== id),
-    }));
+  const deleteContact = id => {
+    setContacts(contacts => contacts.filter(contact => contact.id !== id));
   };
 
-  getFilter = e => {
-    const { name, value } = e.currentTarget;
-    this.setState({ [name]: value });
-  };
+  const getFilter = e => setFilter(e.target.value);
 
-  getVisibleContacts = () => {
-    const { contacts, filter } = this.state;
+  const getVisibleContacts = () => {
     const optimizedFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
@@ -67,41 +44,31 @@ export default class App extends Component {
     );
   };
 
-  checkContact = (contacts, name) => {
+  const checkContact = name => {
     const normalizedName = name.toLowerCase();
-    const notify = () => toast.error(`${name} is already in contacts.`);
-    const isContact = contacts.find(
+    return contacts.find(
       contact => contact.name.toLowerCase() === normalizedName
     );
-
-    if (isContact) {
-      notify();
-      return true;
-    }
   };
 
-  render() {
-    const visibleContacts = this.getVisibleContacts();
-    const { filter } = this.state;
-    return (
-      <div>
-        <TitleProject>Phonebook</TitleProject>
-        <Section>
-          <ContactForm addContact={this.addContact} />
-        </Section>
-        <Section title="Contacts">
-          <FindContacts filter={filter} onChange={this.getFilter} />
-          <Contacts
-            contacts={visibleContacts}
-            deleteContact={this.deleteContact}
-          />
-        </Section>
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar={true}
+  return (
+    <div>
+      <TitleProject>Phonebook</TitleProject>
+      <Section>
+        <ContactForm addContact={addContact} />
+      </Section>
+      <Section title="Contacts">
+        <FindContacts filter={filter} onChange={getFilter} />
+        <Contacts
+          contacts={getVisibleContacts()}
+          deleteContact={deleteContact}
         />
-      </div>
-    );
-  }
+      </Section>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={true}
+      />
+    </div>
+  );
 }
