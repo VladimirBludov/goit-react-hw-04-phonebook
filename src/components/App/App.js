@@ -27,11 +27,11 @@ export default function App() {
       number,
     };
 
-    setContacts(contacts => [...contacts, contact]);
+    setContacts([...contacts, contact]);
   };
 
   const deleteContact = id => {
-    setContacts(contacts => contacts.filter(contact => contact.id !== id));
+    setContacts(contacts.filter(contact => contact.id !== id));
   };
 
   const getFilter = e => setFilter(e.target.value);
